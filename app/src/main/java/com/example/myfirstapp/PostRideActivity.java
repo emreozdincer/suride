@@ -1,3 +1,5 @@
+//TODO: Change this to a Fragment.
+
 package com.example.myfirstapp;
 
 import android.app.Activity;

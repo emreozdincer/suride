@@ -1,14 +1,20 @@
 package com.example.myfirstapp;
 
 import android.app.Activity;
+//import android.app.Fragment;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,23 +47,26 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private List<Ride> ridesList;
+    private User user;
     private ListAdapter adapter;
     private String userID;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001; // Request Code for Sign-in
     private static final int RC_POST_RIDE = 9002; // Request Code for PostRide
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //TODO: Implement user creation with log-in/register
+        user = new User("Jason");
+
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 // TODO: Get the server_client_id from teammates
-                // .requestIdToken(getString(R.string.server_client_id))
+//                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
@@ -84,16 +93,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize rides list
-        ridesList = new ArrayList<Ride>();
-        Ride dummyRide = new Ride("Dummy ID","Dummy Destination", new Date(),2, "Dummy Description");
-        ridesList.add(dummyRide);
-
-        // Set the adapter for list view
-        adapter = new CustomListAdapter(this, ridesList);
-        ListView tasksListView = (ListView) findViewById(R.id.listView_rides);
-        tasksListView.setAdapter(adapter);
-
         // Listen to post button
         findViewById(R.id.button_postRide).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +105,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.navigationView);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment selectedFragment = null;
+                switch (item.getItemId()) {
+                    case R.id.navigation_profile:
+                        //Add your action onClick
+                        findViewById(R.id.button_signOut).setVisibility(View.VISIBLE);
+                        findViewById(R.id.button_postRide).setVisibility(View.GONE);
+                        selectedFragment = ProfilePageFragment.newInstance();
+                        break;
+                    case R.id.navigation_rides:
+                        findViewById(R.id.button_postRide).setVisibility(View.VISIBLE);
+                        findViewById(R.id.button_signOut).setVisibility(View.GONE);
+                        selectedFragment = ViewRidesFragment.newInstance();
+                        break;
+                }
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, selectedFragment);
+                transaction.commit();
+                return true;
+            }
+        });
+
+        //Manually displaying the first fragment - one time only
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
+        transaction.commit();
+
+        // Initialize rides list
+        ridesList = new ArrayList<Ride>();
+        Ride dummyRide = new Ride("Dummy ID","Dummy Destination", new Date(),2, "Dummy Description");
+        ridesList.add(dummyRide);
     }
 
     private void signIn() {
@@ -135,10 +169,12 @@ public class MainActivity extends AppCompatActivity {
             handleSignInResult(task);
         }
         // A ride was posted, extract the ride and update the list view.
-        else if (resultCode == Activity.RESULT_OK) {
-            String returnValue = data.getStringExtra("Take this ride");
-            Ride newRide = new Gson().fromJson(returnValue, Ride.class);
-            addRide(newRide);
+        else if (requestCode == RC_POST_RIDE){
+            if (resultCode == Activity.RESULT_OK) {
+                String returnValue = data.getStringExtra("Take this ride");
+                Ride newRide = new Gson().fromJson(returnValue, Ride.class);
+                addRide(newRide);
+            }
         }
     }
 
@@ -147,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             // Get Sign-in Account
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
+//            Log.i("IDTOKEN", idToken);
 
             if (idToken != null) {
                 try {
@@ -161,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
                     HttpResponse response = httpClient.execute(httpPost);
                     int statusCode = response.getStatusLine().getStatusCode();
                     final String responseBody = EntityUtils.toString(response.getEntity());
-                    Log.d("handleSignInResult", "Signed in as: " + responseBody);
+                    Log.i("SERVER RESPONSE", "Signed in as: " + responseBody);
+
                 } catch (UnsupportedEncodingException e) {
                     Log.e("handleSignInResult", "Error sending ID token to backend.", e);
                     e.printStackTrace();
@@ -198,21 +236,27 @@ public class MainActivity extends AppCompatActivity {
         updateUI(account);
     }
 
-    //TODO: Should set up a UI such that sign in and out buttons appear depending on whether a client is signed in.
     public void  updateUI(GoogleSignInAccount account) {
-        TextView tvLogInStatus = (TextView) findViewById(R.id.textView_logInStatus_debug);
-        ListView lvPosts = (ListView) findViewById(R.id.listView_rides);
-        //TODO: implement what happens to UI and activities if not logged in
+
+        // References to view objects
+        FrameLayout fl = (FrameLayout) findViewById(R.id.frame_layout);
+        Button btPostRide = (Button) findViewById(R.id.button_postRide);
+        SignInButton btSignIn = findViewById(R.id.sign_in_button);
+        BottomNavigationView bnv = (BottomNavigationView) findViewById(R.id. navigationView);
+
+        //TODO: Update UI with seperate login activity rather than setting visibility of items (?)
         if (account != null) {
             userID = account.getDisplayName();
-            lvPosts.setVisibility(View.VISIBLE);
-            tvLogInStatus.setText("Logged in");
-            Log.d("updateUI", "Function call, logged in");
+            fl.setVisibility(View.VISIBLE);
+            btPostRide.setVisibility(View.VISIBLE);
+            btSignIn.setVisibility(View.GONE);
+            bnv.setVisibility(View.VISIBLE);
         } else {
             userID = null;
-            lvPosts.setVisibility(View.GONE);
-            tvLogInStatus.setText("NOT logged in");
-            Log.d("updateUI", "Function call, NOT logged in");
+            fl.setVisibility(View.GONE);
+            btSignIn.setVisibility(View.VISIBLE);
+            btPostRide.setVisibility(View.GONE);
+            bnv.setVisibility(View.GONE);
         }
     }
 
@@ -230,6 +274,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void addRide(Ride ride) {
         ridesList.add(ride);
-        ((BaseAdapter)adapter).notifyDataSetChanged();
+        // TODO: notify ViewRidesFragment
     }
+
+    public List<Ride> getRidesList() {
+        return ridesList;
+    }
+
+    public User getUser() { return user; }
 }
