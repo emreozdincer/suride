@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout fl = (FrameLayout) findViewById(R.id.frame_layout);
         Button btPostRide = (Button) findViewById(R.id.button_postRide);
         SignInButton btSignIn = findViewById(R.id.sign_in_button);
+        Button btSignOut = findViewById(R.id.button_signOut);
         BottomNavigationView bnv = (BottomNavigationView) findViewById(R.id. navigationView);
 
         //TODO: Update UI with seperate login activity rather than setting visibility of items (?)
@@ -249,12 +250,14 @@ public class MainActivity extends AppCompatActivity {
             userID = account.getDisplayName();
             fl.setVisibility(View.VISIBLE);
             btPostRide.setVisibility(View.VISIBLE);
+            btSignOut.setVisibility(View.VISIBLE);
             btSignIn.setVisibility(View.GONE);
             bnv.setVisibility(View.VISIBLE);
         } else {
             userID = null;
             fl.setVisibility(View.GONE);
             btSignIn.setVisibility(View.VISIBLE);
+            btSignOut.setVisibility(View.GONE);
             btPostRide.setVisibility(View.GONE);
             bnv.setVisibility(View.GONE);
         }
