@@ -2,6 +2,7 @@ package com.example.myfirstapp;
 
 import android.app.Activity;
 //import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -47,8 +48,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private List<Ride> ridesList;
+    private List<User> usersList;
     private User user;
-    private ListAdapter adapter;
     private String userID;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001; // Request Code for Sign-in
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //TODO: Implement user creation with log-in/register
-        user = new User("Jason");
+        user = new User("Emre");
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -85,27 +86,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // listen to sign-out button
-        findViewById(R.id.button_signOut).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signOut();
-            }
-        });
-
-        // Listen to post button
-        findViewById(R.id.button_postRide).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (userID == null) {
-                    Toast.makeText(MainActivity.this, "You need to log-in first", Toast.LENGTH_SHORT).show();
-                } else {
-                    postRide(userID);
-                }
-            }
-        });
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.navigationView);
+
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -114,13 +96,14 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_profile:
                         //Add your action onClick
-                        findViewById(R.id.button_signOut).setVisibility(View.VISIBLE);
-                        findViewById(R.id.button_postRide).setVisibility(View.GONE);
                         selectedFragment = ProfilePageFragment.newInstance();
                         break;
                     case R.id.navigation_rides:
-                        findViewById(R.id.button_postRide).setVisibility(View.VISIBLE);
-                        findViewById(R.id.button_signOut).setVisibility(View.GONE);
+                        selectedFragment = ViewRidesFragment.newInstance();
+                        break;
+
+                    case R.id.navigation_development:
+                        Toast.makeText(MainActivity.this, "Development fragment is not implemented yet", Toast.LENGTH_LONG).show();
                         selectedFragment = ViewRidesFragment.newInstance();
                         break;
                 }
@@ -130,11 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        //Manually displaying the first fragment - one time only
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
-        transaction.commit();
 
         // Initialize rides list
         ridesList = new ArrayList<Ride>();
@@ -147,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void signOut() {
+    public void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
@@ -174,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
                 String returnValue = data.getStringExtra("Take this ride");
                 Ride newRide = new Gson().fromJson(returnValue, Ride.class);
                 addRide(newRide);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, ViewRidesFragment.newInstance());
+                transaction.commit();
             }
         }
     }
@@ -218,6 +200,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("handleSignInResult", "success");
             updateUI(account);
 
+            //Manually displaying the initial (welcome) fragment when sign in succeeds.
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
+            transaction.commit();
+
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -240,44 +227,39 @@ public class MainActivity extends AppCompatActivity {
 
         // References to view objects
         FrameLayout fl = (FrameLayout) findViewById(R.id.frame_layout);
-        Button btPostRide = (Button) findViewById(R.id.button_postRide);
         SignInButton btSignIn = findViewById(R.id.sign_in_button);
-        Button btSignOut = findViewById(R.id.button_signOut);
         BottomNavigationView bnv = (BottomNavigationView) findViewById(R.id. navigationView);
 
         //TODO: Update UI with seperate login activity rather than setting visibility of items (?)
         if (account != null) {
             userID = account.getDisplayName();
             fl.setVisibility(View.VISIBLE);
-            btPostRide.setVisibility(View.VISIBLE);
-            btSignOut.setVisibility(View.VISIBLE);
             btSignIn.setVisibility(View.GONE);
             bnv.setVisibility(View.VISIBLE);
         } else {
             userID = null;
             fl.setVisibility(View.GONE);
             btSignIn.setVisibility(View.VISIBLE);
-            btSignOut.setVisibility(View.GONE);
-            btPostRide.setVisibility(View.GONE);
             bnv.setVisibility(View.GONE);
         }
     }
 
     /* Called when user taps the Post a Ride button */
-    public void postRide(String userId) {
-        Intent i=new Intent(this, PostRideActivity.class);
-        i.putExtra("User id", userId);
-        try {
-            startActivityForResult(i,RC_POST_RIDE);
-        }
-        catch(Exception e){
-            Log.d("exception", e.getMessage());
+    public void postRide() {
+        if (userID != null) {
+            Intent i=new Intent(this, PostRideActivity.class);
+            i.putExtra("User id", userID);
+            try {
+                startActivityForResult(i,RC_POST_RIDE);
+            }
+            catch(Exception e){
+                Log.d("exception", e.getMessage());
+            }
         }
     }
 
     public void addRide(Ride ride) {
         ridesList.add(ride);
-        // TODO: notify ViewRidesFragment
     }
 
     public List<Ride> getRidesList() {
@@ -285,4 +267,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getUser() { return user; }
+
+    public Ride getRide(int rideID) {
+        System.out.println("Size: " + Integer.toString(ridesList.size()));
+        return ridesList.get(rideID);
+    }
+
+   public void addCommentToRide(String comment, int ridePosition) {
+        ridesList.get(ridePosition).addComment(comment);
+   }
+
+    public static int getNavBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 }

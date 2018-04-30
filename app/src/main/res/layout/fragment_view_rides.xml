@@ -20,4 +20,14 @@
         android:layout_margin="5dp"
         android:layout_weight="9"></ListView>
 
+
+    <Button
+        android:id="@+id/button_postRide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="postRide"
+        android:text="Post a Ride"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </LinearLayout>

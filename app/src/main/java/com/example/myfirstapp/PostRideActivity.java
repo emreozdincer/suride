@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -68,6 +69,7 @@ public class PostRideActivity extends AppCompatActivity
             ride = new Ride(userId, destination, departureDate, numSeats, description);
             addRide(ride);
         } catch (NumberFormatException e){
+            Toast.makeText(this, "Number of seats must be valid integer", Toast.LENGTH_SHORT).show();
             Log.e("Create Ride", "Number of seats must be valid integer", e);
         }
 

@@ -9,14 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:layout_weight="1"
+        android:layout_weight="30"
         android:scaleType="center"
         app:srcCompat="@mipmap/ic_launcher_round" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="30"
         android:orientation="horizontal">
 
         <TextView
@@ -25,6 +25,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="Name:"
+            android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Profile Name"
+            android:text="Emre"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     </LinearLayout>
@@ -41,7 +42,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="30"
         android:orientation="horizontal">
 
         <TextView
@@ -50,6 +51,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="Rating:"
+            android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <TextView
@@ -58,9 +60,22 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Rating"
+            android:text="-1"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button_signOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginBottom="75dp"
+        android:layout_marginRight="16dp"
+        android:layout_weight="1"
+        android:text="Sign Out"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </LinearLayout>

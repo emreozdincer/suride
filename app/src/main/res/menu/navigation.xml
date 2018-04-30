@@ -13,9 +13,9 @@
         android:icon="@drawable/ic_motorcycle_black_24dp"
         android:title="Rides" />
 
-    <!--<item-->
-        <!--android:id="@+id/navigation_artists"-->
-        <!--android:icon="@drawable/ic_person_pin_black_24dp"-->
-        <!--android:title="Artists"/>-->
+    <item
+        android:id="@+id/navigation_development"
+        android:icon="@drawable/ic_music_note_black_24dp"
+        android:title="Development"/>
 
 </menu>

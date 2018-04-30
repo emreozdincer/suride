@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -16,17 +15,17 @@ import java.util.List;
  * Created by Emre on 07-Apr-18.
  */
 
-public class CustomListAdapter extends ArrayAdapter<Ride> {
+public class CustomRidesListAdapter extends ArrayAdapter<Ride> {
 
-    public CustomListAdapter(@NonNull Context context, List<Ride> resource) {
-        super(context, R.layout.custom_row, resource);
+    public CustomRidesListAdapter(@NonNull Context context, List<Ride> resource) {
+        super(context, R.layout.custom_row_rides_list, resource);
     }
 
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater dummyInflater = LayoutInflater.from(getContext());
-        View customView = dummyInflater.inflate(R.layout.custom_row, parent, false);
+        View customView = dummyInflater.inflate(R.layout.custom_row_rides_list, parent, false);
 
         // Set the list view texts
         Ride singleRideItem = getItem(position);

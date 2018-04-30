@@ -3,13 +3,18 @@ package com.example.myfirstapp;
 //import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.sql.SQLOutput;
 import java.util.List;
 
 /**
@@ -40,20 +45,52 @@ public class ViewRidesFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_view_rides, container, false);
 
+        // Listen to post button
+        view.findViewById(R.id.button_postRide).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.postRide();
+            }
+        });
+
+
         // Set the adapter for list view
         ridesList = mainActivity.getRidesList();
-        adapter = new CustomListAdapter(mainActivity.getApplicationContext(), ridesList);
+        adapter = new CustomRidesListAdapter(mainActivity.getApplicationContext(), ridesList);
         ListView tasksListView = (ListView) view.findViewById(R.id.listView_rides);
         tasksListView.setAdapter(adapter);
+
+        // Set the listener for list view
+        tasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Send ride id (postiion) to ViewSingleRideFragment
+                Bundle bundle = new Bundle();
+                bundle.putInt("RideID", position);
+                System.out.println("Position: " + position);
+
+                ViewSingleRideFragment fragment = new ViewSingleRideFragment();
+                fragment.setArguments(bundle);
+
+                // Hide Post Button
+                View rootView = view.getRootView();
+                Button buttonPostRide = (Button) rootView.findViewById(R.id.button_postRide);
+                buttonPostRide.setVisibility(View.GONE);
+
+                // Change Fragment
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, fragment);
+                transaction.commit();
+            }
+        });
 
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ridesList = mainActivity.getRidesList();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        ridesList = mainActivity.getRidesList();
+//    }
 
     // TODO: Read rides_list from database on data change
 }
