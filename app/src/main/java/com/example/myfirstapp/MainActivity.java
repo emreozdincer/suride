@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
+                transaction.addToBackStack("");
                 transaction.commit();
                 return true;
             }
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, ViewRidesFragment.newInstance());
+                transaction.addToBackStack("");
                 transaction.commit();
             }
         }
@@ -205,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
             //Manually displaying the initial (welcome) fragment when sign in succeeds.
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
+            transaction.addToBackStack("");
             transaction.commit();
 
         } catch (ApiException e) {
@@ -287,5 +290,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-
 }

@@ -79,6 +79,7 @@ public class ViewRidesFragment extends Fragment {
                 // Change Fragment
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, fragment);
+                transaction.addToBackStack("");
                 transaction.commit();
             }
         });
