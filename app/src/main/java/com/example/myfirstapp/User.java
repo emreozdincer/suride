@@ -1,5 +1,6 @@
 package com.example.myfirstapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,13 +11,15 @@ public class User {
     private String username;
     private float averageRating;
     private List ratings;
+    private Ride currentRide;
     private List<Ride> previousRides;
 
     public User(String username) {
         this.username = username;
         this.averageRating = -1;
         this.ratings = null;
-        this.previousRides = null;
+        this.previousRides = new ArrayList<Ride>();
+        this.currentRide = null;
     }
 
     public String getUsername() {

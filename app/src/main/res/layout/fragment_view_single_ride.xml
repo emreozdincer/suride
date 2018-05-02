@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="45"
+        android:layout_weight="30"
         android:orientation="vertical">
 
         <LinearLayout
@@ -113,7 +113,6 @@
                 </LinearLayout>
 
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -169,7 +168,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
+        android:layout_weight="12"
         android:gravity="bottom"
         android:orientation="horizontal">
 
@@ -195,7 +194,7 @@
         android:id="@+id/tbt_JoinRide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="8"
         android:textOff="Send request to join"
         android:textOn="Waiting response..." />
 

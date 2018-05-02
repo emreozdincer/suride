@@ -19,6 +19,7 @@ public class Ride {
     private int numSeats;
     private String description;
     private List<String> comments;
+    private List<String> ridees;
 
     // Constructor
     public Ride(String ownerID, String destination, Date departureDate, int numSeats, String description) {
@@ -28,10 +29,24 @@ public class Ride {
         this.numSeats = numSeats;
         this.description = description;
         this.comments = new ArrayList<String>();
+        this.ridees = new ArrayList<String>();
     }
+
+    //TODO: Make a new Comment class for better comment representation than list of strings
+    //(username, date, comment id...) (need to create a new adapter as well)
 
     public void addComment (String comment) {
         this.comments.add(comment);
+    }
+
+    // Ridee take a seat from ride
+    public void takeSeat(String ridee) {
+        this.ridees.add(ridee);
+        this.numSeats--;
+    }
+
+    public List<String> getRidees() {
+        return ridees;
     }
 
     public List<String> getComments() {

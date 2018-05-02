@@ -4,6 +4,7 @@ import android.app.Activity;
 //import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -59,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //TODO: Implement user creation with log-in/register
-        user = new User("Emre");
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize rides list
         ridesList = new ArrayList<Ride>();
         Ride dummyRide = new Ride("Ege Buildersohn","Uskudar", new Date(),2, "SURide and Chill?");
-        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),2, "Going to the game tonight.");
+        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),1, "Going to the game tonight.");
         ridesList.add(dummyRide);
         ridesList.add(dummyRide2);
     }
@@ -204,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d("handleSignInResult", "success");
             updateUI(account);
 
+
+            // Add user to database if first time sign-in
+            if (user == null) {
+                createNewUser(account.getDisplayName());
+            }
+
             //Manually displaying the initial (welcome) fragment when sign in succeeds.
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
@@ -234,18 +239,23 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout fl = (FrameLayout) findViewById(R.id.frame_layout);
         SignInButton btSignIn = findViewById(R.id.sign_in_button);
         BottomNavigationView bnv = (BottomNavigationView) findViewById(R.id. navigationView);
+        ImageView ivBackground  =(ImageView) findViewById(R.id.iv_Background);
+        ImageView ivLogo =(ImageView) findViewById(R.id.iv_Logo);
 
-        //TODO: Update UI with seperate login activity rather than setting visibility of items (?)
         if (account != null) {
             userID = account.getDisplayName();
             fl.setVisibility(View.VISIBLE);
             btSignIn.setVisibility(View.GONE);
             bnv.setVisibility(View.VISIBLE);
+            ivBackground.setVisibility(View.GONE);
+            ivLogo.setVisibility(View.GONE);
         } else {
             userID = null;
             fl.setVisibility(View.GONE);
             btSignIn.setVisibility(View.VISIBLE);
             bnv.setVisibility(View.GONE);
+            ivBackground.setVisibility(View.VISIBLE);
+            ivLogo.setVisibility(View.VISIBLE);
         }
     }
 
@@ -263,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addRide(Ride ride) {
+    private void addRide(Ride ride) {
         ridesList.add(ride);
     }
 
@@ -271,7 +281,13 @@ public class MainActivity extends AppCompatActivity {
         return ridesList;
     }
 
-    public User getUser() { return user; }
+    public User getUser() {
+        if (user != null) {
+            return user;
+        } else {
+            return new User("Error in user creation");
+        }
+    }
 
     public Ride getRide(int rideID) {
         System.out.println("Size: " + Integer.toString(ridesList.size()));
@@ -282,12 +298,8 @@ public class MainActivity extends AppCompatActivity {
         ridesList.get(ridePosition).addComment(comment);
    }
 
-    public static int getNavBarHeight(Context context) {
-        int result = 0;
-        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = context.getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
+   private void createNewUser(String username) {
+       //TODO: Prompt for username etc
+       user = new User(username);
+   }
 }
