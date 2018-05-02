@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -17,6 +18,7 @@ import com.example.myfirstapp.CustomRidesListAdapter;
 import com.example.myfirstapp.MainActivity;
 import com.example.myfirstapp.R;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -51,22 +53,19 @@ public class ViewSingleRideFragment extends Fragment {
         TextView tvRiderName = (TextView) view.findViewById(R.id.tv_Rider);
         TextView tvRideDestination = (TextView) view.findViewById(R.id.tv_Destination);
         TextView tvRideDescription = (TextView) view.findViewById(R.id.tv_Description);
-        TextView tvRideComments = (TextView) view.findViewById(R.id.tv_RideComments);
+        TextView tvRidedDepartureTime = (TextView) view.findViewById(R.id.tv_DepartureTime);
+        ListView lvRideComments = (ListView) view.findViewById(R.id.lv_RideComments);
 
-        // Set Texts
+        // Set adapter for comments
+        final ArrayAdapter<String> commentsAdapter = new ArrayAdapter<String>(mainActivity.getApplicationContext(), android.R.layout.test_list_item,
+                android.R.id.text1, ride.getComments());
+        lvRideComments.setAdapter(commentsAdapter);
+
+        // Set Text View texts
         tvRiderName.setText(ride.getOwnerID());
         tvRideDestination.setText(ride.getDestination());
         tvRideDescription.setText(ride.getDescription());
-        List<String> comments = ride.getComments();
-        if (comments.size() > 0) {
-            String sComments = "Comments:\n";
-
-            for(int i=0; i<  comments.size(); i++){
-                sComments += Integer.toString(i+1);
-                sComments += ". " + comments.get(i) + "\n";
-            }
-            tvRideComments.setText(sComments);
-        }
+        tvRidedDepartureTime.setText(new SimpleDateFormat("HH:mm").format(ride.getDepartureDate()));
 
         // Listen for new comments
         Button btComment = (Button) view.findViewById(R.id.bt_Comment);
@@ -77,7 +76,7 @@ public class ViewSingleRideFragment extends Fragment {
             public void onClick(View v) {
                 String comment = etComment.getText().toString();
                 mainActivity.addCommentToRide(comment, rideID);
-                Toast.makeText(mainActivity, "Comment added, refresh page to see", Toast.LENGTH_SHORT).show();
+                commentsAdapter.notifyDataSetChanged();
             }
         });
 

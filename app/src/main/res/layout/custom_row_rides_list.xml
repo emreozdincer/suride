@@ -9,8 +9,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="2"
-        android:text="userID"
+        android:layout_weight="40"
+        android:text="Ege Buildersohn"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
@@ -18,8 +18,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="2"
-        android:text="destination"
+        android:layout_weight="40"
+        android:text="Kadikoy"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
@@ -27,8 +27,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="1"
-        android:text="numSeats"
+        android:layout_weight="5"
+        android:text="3"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <TextView
+        android:id="@+id/departureTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="15"
+        android:text="00:00"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

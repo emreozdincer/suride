@@ -58,7 +58,7 @@ public class Ride {
         this.destination = destination;
     }
 
-    public Date getDepartureDateDate() {
+    public Date getDepartureDate() {
         return departureDate;
     }
 

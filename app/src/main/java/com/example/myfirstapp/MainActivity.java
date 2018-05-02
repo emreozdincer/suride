@@ -116,8 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize rides list
         ridesList = new ArrayList<Ride>();
-        Ride dummyRide = new Ride("Dummy ID","Dummy Destination", new Date(),2, "Dummy Description");
+        Ride dummyRide = new Ride("Ege Buildersohn","Uskudar", new Date(),2, "SURide and Chill?");
+        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),2, "Going to the game tonight.");
         ridesList.add(dummyRide);
+        ridesList.add(dummyRide2);
     }
 
     private void signIn() {
@@ -285,4 +287,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
+
 }

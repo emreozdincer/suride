@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Emre on 07-Apr-18.
@@ -32,10 +35,12 @@ public class CustomRidesListAdapter extends ArrayAdapter<Ride> {
         TextView rOwnerId = (TextView) customView.findViewById(R.id.userID);
         TextView rDestination = (TextView) customView.findViewById(R.id.destination);
         TextView rNumSeats = (TextView) customView.findViewById(R.id.numSeats);
+        TextView rTime = (TextView) customView.findViewById(R.id.departureTime);
 
         rOwnerId.setText(singleRideItem.getOwnerID());
         rDestination.setText(singleRideItem.getDestination());
         rNumSeats.setText(Integer.toString(singleRideItem.getNumSeats()));
+        rTime.setText(new SimpleDateFormat("HH:mm").format(singleRideItem.getDepartureDate()));
 
         return customView;
     }
