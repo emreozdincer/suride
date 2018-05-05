@@ -1,43 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/userID"
+        android:id="@+id/commentID"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="4"
-        android:text="Ege Buildersohn"
+        android:layout_weight="1"
+        android:text="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/destination"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:layout_weight="4"
-        android:text="Kadikoy"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/numSeats"
+        android:id="@+id/commentOwner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
         android:layout_weight="2"
-        android:text="3"
+        android:text="Ege Buildersen"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/departureTime"
+        android:id="@+id/commentText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"
-        android:layout_weight="3"
-        android:text="00:00"
+        android:layout_weight="4"
+        android:text="Very interesting ride. Can I join?"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
+    <TextView
+        android:id="@+id/commentDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:layout_weight="2"
+        android:text="00:05"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 </LinearLayout>

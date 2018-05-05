@@ -20,9 +20,9 @@ import java.util.Locale;
  * Created by Emre on 07-Apr-18.
  */
 
-public class CustomRidesListAdapter extends ArrayAdapter<Ride> {
+public class RidesListAdapter extends ArrayAdapter<Ride> {
 
-    public CustomRidesListAdapter(@NonNull Context context, List<Ride> resource) {
+    public RidesListAdapter(@NonNull Context context, List<Ride> resource) {
         super(context, R.layout.custom_row_rides_list, resource);
     }
 
@@ -30,17 +30,18 @@ public class CustomRidesListAdapter extends ArrayAdapter<Ride> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater dummyInflater = LayoutInflater.from(getContext());
-        View customView = dummyInflater.inflate(R.layout.custom_card_row_rides_list, parent, false);
+//        View customView = dummyInflater.inflate(R.layout.custom_card_row_rides_list, parent, false);
+        View customView = dummyInflater.inflate(R.layout.custom_row_rides_list, parent, false);
 
         // Set the list view fields
         Ride singleRideItem = getItem(position);
-        ImageView rOwnerPic = (ImageView) customView.findViewById(R.id.userPic);
+//        ImageView rOwnerPic = (ImageView) customView.findViewById(R.id.userPic);
         TextView rOwnerId = (TextView) customView.findViewById(R.id.userID);
         TextView rDestination = (TextView) customView.findViewById(R.id.destination);
         TextView rNumSeats = (TextView) customView.findViewById(R.id.numSeats);
         TextView rTime = (TextView) customView.findViewById(R.id.departureTime);
 
-        rOwnerPic.setImageResource(R.mipmap.ic_launcher_round);
+//        rOwnerPic.setImageResource(R.mipmap.ic_launcher_round);
         rOwnerId.setText(singleRideItem.getOwnerID());
         rDestination.setText(singleRideItem.getDestination());
         rNumSeats.setText(Integer.toString(singleRideItem.getNumSeats()));

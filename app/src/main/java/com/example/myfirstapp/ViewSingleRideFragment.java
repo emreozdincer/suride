@@ -1,6 +1,5 @@
 package com.example.myfirstapp;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,14 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.example.myfirstapp.CustomRidesListAdapter;
-import com.example.myfirstapp.MainActivity;
-import com.example.myfirstapp.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +22,7 @@ import java.util.List;
 public class ViewSingleRideFragment extends Fragment {
 
     private MainActivity mainActivity;
+    private CommentsAdapter commentsAdapter;
 
     public static ViewSingleRideFragment newInstance() {
         ViewSingleRideFragment fragment = new ViewSingleRideFragment();
@@ -46,7 +41,7 @@ public class ViewSingleRideFragment extends Fragment {
 
         // Get the selected ride and inflate view screen
         final int rideID = getArguments().getInt("RideID");
-        Ride ride = mainActivity.getRide(rideID);
+        final Ride ride = mainActivity.getRide(rideID);
 
         View view = inflater.inflate(R.layout.fragment_view_single_ride, container, false);
 
@@ -57,8 +52,8 @@ public class ViewSingleRideFragment extends Fragment {
         ListView lvRideComments = (ListView) view.findViewById(R.id.lv_RideComments);
 
         // Set adapter for comments
-        final ArrayAdapter<String> commentsAdapter = new ArrayAdapter<String>(mainActivity.getApplicationContext(), android.R.layout.test_list_item,
-                android.R.id.text1, ride.getComments());
+        List<Ride.Comment> commentsList = ride.getComments();
+        commentsAdapter = new CommentsAdapter(mainActivity.getApplicationContext(), commentsList);
         lvRideComments.setAdapter(commentsAdapter);
 
         // Set Text View texts
@@ -74,7 +69,8 @@ public class ViewSingleRideFragment extends Fragment {
         btComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String comment = etComment.getText().toString();
+                String commentText = etComment.getText().toString();
+                Ride.Comment comment = new Ride.Comment(commentText, mainActivity.getUser().getUsername(), new Date());
                 mainActivity.addCommentToRide(comment, rideID);
                 commentsAdapter.notifyDataSetChanged();
             }

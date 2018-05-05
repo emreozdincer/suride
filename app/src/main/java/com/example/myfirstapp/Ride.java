@@ -18,7 +18,7 @@ public class Ride {
     private Date departureDate;
     private int numSeats;
     private String description;
-    private List<String> comments;
+    private List<Comment> comments;
     private List<String> ridees;
 
     // Constructor
@@ -28,14 +28,36 @@ public class Ride {
         this.departureDate = departureDate;
         this.numSeats = numSeats;
         this.description = description;
-        this.comments = new ArrayList<String>();
+        this.comments = new ArrayList<Comment>();
         this.ridees = new ArrayList<String>();
     }
 
-    //TODO: Make a new Comment class for better comment representation than list of strings
-    //(username, date, comment id...) (need to create a new adapter as well)
+    // TODO: Create relevant adapter
+    public static class Comment {
+        private String comment;
+        private String ownerUsername;
+        private Date date;
 
-    public void addComment (String comment) {
+        public Comment(String comment, String ownerUsername, Date date) {
+            this.comment = comment;
+            this.ownerUsername = ownerUsername;
+            this.date = date;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public String getOwnerUsername() {
+            return ownerUsername;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+    }
+
+    public void addComment (Comment comment) {
         this.comments.add(comment);
     }
 
@@ -49,11 +71,11 @@ public class Ride {
         return ridees;
     }
 
-    public List<String> getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<String> comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 

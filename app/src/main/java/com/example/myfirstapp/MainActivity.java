@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -155,10 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 Ride newRide = new Gson().fromJson(returnValue, Ride.class);
                 addRide(newRide);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame_layout, ViewRidesFragment.newInstance());
-                transaction.addToBackStack("");
-                transaction.commit();
+                setDefaultFragment();
             }
         }
     }
@@ -209,11 +207,8 @@ public class MainActivity extends AppCompatActivity {
                 createNewUser(account.getDisplayName());
             }
 
-            //Manually displaying the initial (welcome) fragment when sign in succeeds.
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame_layout, InitialFragment.newInstance());
-            transaction.addToBackStack("");
-            transaction.commit();
+            //Manually displaying the View Rides Fragment when sign in succeeds.
+            setDefaultFragment();
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -285,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             return user;
         } else {
-            return new User("Error in user creation");
+            return new User("User error (Need to implement DB)");
         }
     }
 
@@ -294,12 +289,32 @@ public class MainActivity extends AppCompatActivity {
         return ridesList.get(rideID);
     }
 
-   public void addCommentToRide(String comment, int ridePosition) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager != null) {
+            int backStackEntryCount = manager.getBackStackEntryCount();
+            if (backStackEntryCount == 0) {
+                setDefaultFragment();
+            }
+        }
+
+    }
+
+    public void addCommentToRide(Ride.Comment comment, int ridePosition) {
         ridesList.get(ridePosition).addComment(comment);
    }
 
    private void createNewUser(String username) {
        //TODO: Prompt for username etc
        user = new User(username);
+   }
+
+   private void setDefaultFragment() {
+       FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+       transaction.replace(R.id.frame_layout, ViewRidesFragment.newInstance());
+       transaction.addToBackStack("");
+       transaction.commit();
    }
 }

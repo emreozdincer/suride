@@ -11,10 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 /**
@@ -56,7 +53,7 @@ public class ViewRidesFragment extends Fragment {
 
         // Set the adapter for list view
         ridesList = mainActivity.getRidesList();
-        adapter = new CustomRidesListAdapter(mainActivity.getApplicationContext(), ridesList);
+        adapter = new RidesListAdapter(mainActivity.getApplicationContext(), ridesList);
         ListView tasksListView = (ListView) view.findViewById(R.id.listView_rides);
         tasksListView.setAdapter(adapter);
 
