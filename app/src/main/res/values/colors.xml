@@ -3,9 +3,9 @@
     <color name="colorPrimary">#00AA8D</color>
     <color name="colorPrimaryDark">#008975</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="grayLight">#fafafafa</color>
+    <color name="startBlue">#09cfdf</color>
+    <color name="endBlue">#0bcce6</color>
 
     <color name="white">#FFFFFF</color>
-    <!--<color name="surr">#d8dee1</color>-->
-    <!--<color name="toolbarColor">#FAFAFA</color>-->
-    <!--<color name="backgroundColor">#D8DEE1</color>-->
 </resources>

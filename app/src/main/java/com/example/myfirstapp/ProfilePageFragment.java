@@ -29,7 +29,7 @@ public class ProfilePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_profile_page, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile_page_new, container, false);
         TextView tvUserName = (TextView) view.findViewById(R.id.tv_ProfileName);
         TextView tvRating = (TextView) view.findViewById(R.id.tv_Rating);
 

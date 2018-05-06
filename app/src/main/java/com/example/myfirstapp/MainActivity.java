@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             return user;
         } else {
-            return new User("User error (Need to implement DB)");
+            return new User("Dummy Username");
         }
     }
 
