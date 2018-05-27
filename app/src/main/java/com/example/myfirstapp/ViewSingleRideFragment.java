@@ -1,5 +1,6 @@
 package com.example.myfirstapp;
 
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +25,9 @@ import java.util.List;
 public class ViewSingleRideFragment extends Fragment {
 
     private MainActivity mainActivity;
-    private CommentsAdapter commentsAdapter;
+    private CommentCursorAdapter commentsAdapter;
+    private DBHelper dbHelper;
+    private Cursor cursor;
 
     public static ViewSingleRideFragment newInstance() {
         ViewSingleRideFragment fragment = new ViewSingleRideFragment();
@@ -33,15 +38,19 @@ public class ViewSingleRideFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
+        dbHelper = new DBHelper(mainActivity.getApplicationContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         // Get the selected ride and inflate view screen
-        final int rideID = getArguments().getInt("RideID");
-        final Ride ride = mainActivity.getRide(rideID);
+        final long rideID = (long) getArguments().getInt("RideID");
+//        final Ride ride = dbHelper.getRideByID(rideID);
+        String strRide = getArguments().getString("Ride");
+        final Ride ride = new Gson().fromJson(strRide, Ride.class);
 
         View view = inflater.inflate(R.layout.fragment_view_single_ride, container, false);
 
@@ -51,13 +60,13 @@ public class ViewSingleRideFragment extends Fragment {
         TextView tvRidedDepartureTime = (TextView) view.findViewById(R.id.tv_DepartureTime);
         ListView lvRideComments = (ListView) view.findViewById(R.id.lv_RideComments);
 
-        // Set adapter for comments
-        List<Ride.Comment> commentsList = ride.getComments();
-        commentsAdapter = new CommentsAdapter(mainActivity.getApplicationContext(), commentsList);
+//        // Set adapter for comments
+        cursor = dbHelper.getCommentsByRideID(rideID);
+        commentsAdapter = new CommentCursorAdapter(mainActivity.getApplicationContext(), cursor);
         lvRideComments.setAdapter(commentsAdapter);
 
         // Set Text View texts
-        tvRiderName.setText(ride.getOwnerID());
+        tvRiderName.setText(ride.getOwnerName());
         tvRideDestination.setText(ride.getDestination());
         tvRideDescription.setText(ride.getDescription());
         tvRidedDepartureTime.setText(new SimpleDateFormat("HH:mm").format(ride.getDepartureDate()));
@@ -70,9 +79,9 @@ public class ViewSingleRideFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String commentText = etComment.getText().toString();
-                Ride.Comment comment = new Ride.Comment(commentText, mainActivity.getUser().getUsername(), new Date());
-                mainActivity.addCommentToRide(comment, rideID);
-                commentsAdapter.notifyDataSetChanged();
+                mainActivity.addCommentToRide(commentText, rideID);
+                cursor = dbHelper.getCommentsByRideID(rideID);
+                commentsAdapter.changeCursor(cursor);
             }
         });
 

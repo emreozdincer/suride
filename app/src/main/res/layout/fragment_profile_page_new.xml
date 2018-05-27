@@ -73,7 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="10dp"
-                        android:text="3.7/5"
+                        android:text="-"
                         android:textColor="@color/colorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="10dp"
-                        android:text="9"
+                        android:text="-"
                         android:textColor="@color/colorPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -138,12 +138,14 @@
                 android:src="@drawable/ic_email_black_24dp" />
 
             <TextView
+                android:id="@+id/tv_Email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:paddingStart="20dp"
-                android:text="dummy@sabanciuniv.edu"
-                android:textSize="21sp" />
+                android:text="-"
+                android:textSize="15sp"
+                tools:text="email" />
 
 
         </LinearLayout>

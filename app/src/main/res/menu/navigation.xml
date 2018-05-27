@@ -13,9 +13,9 @@
         android:icon="@drawable/ic_motorcycle_black_24dp"
         android:title="Rides" />
 
-    <item
-        android:id="@+id/navigation_development"
-        android:icon="@drawable/ic_music_note_black_24dp"
-        android:title="Development"/>
+    <!--<item-->
+        <!--android:id="@+id/navigation_development"-->
+        <!--android:icon="@drawable/ic_music_note_black_24dp"-->
+        <!--android:title="Development"/>-->
 
 </menu>

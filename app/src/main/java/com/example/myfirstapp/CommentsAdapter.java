@@ -39,7 +39,7 @@ public class CommentsAdapter extends ArrayAdapter<Ride.Comment> {
         TextView cDate = (TextView) customView.findViewById(R.id.commentDate);
 
         cID.setText(Integer.toString(position));
-        cText.setText(singleCommentItem.getComment());
+        cText.setText(singleCommentItem.getText());
         cOwner.setText(singleCommentItem.getOwnerUsername());
         cDate.setText(new SimpleDateFormat("HH:mm").format(singleCommentItem.getDate()));
 

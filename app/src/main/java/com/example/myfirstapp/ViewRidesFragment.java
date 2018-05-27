@@ -1,6 +1,7 @@
 package com.example.myfirstapp;
 
 //import android.app.Fragment;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class ViewRidesFragment extends Fragment {
     private MainActivity mainActivity;
     List<Ride> ridesList;
     private View view;
+    private DBHelper dbHelper;
 
     public static ViewRidesFragment newInstance() {
         ViewRidesFragment fragment = new ViewRidesFragment();
@@ -34,6 +38,7 @@ public class ViewRidesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
+        dbHelper = new DBHelper(mainActivity.getApplicationContext());
     }
 
     @Override
@@ -51,10 +56,10 @@ public class ViewRidesFragment extends Fragment {
         });
 
 
-        // Set the adapter for list view
-        ridesList = mainActivity.getRidesList();
-        adapter = new RidesListAdapter(mainActivity.getApplicationContext(), ridesList);
+        // Set the adapter for list view;
         ListView tasksListView = (ListView) view.findViewById(R.id.listView_rides);
+        Cursor cursor = dbHelper.getAllRides();
+        RideCursorAdapter adapter = new RideCursorAdapter(mainActivity.getApplicationContext(), cursor);
         tasksListView.setAdapter(adapter);
 
         // Set the listener for list view
@@ -62,8 +67,15 @@ public class ViewRidesFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Send ride id (postiion) to ViewSingleRideFragment
                 Bundle bundle = new Bundle();
-                bundle.putInt("RideID", position);
+                bundle.putInt("RideID", (int) id);
+
+
                 System.out.println("Position: " + position);
+                System.out.println("ID: " + id);
+
+                Ride ride = dbHelper.getRideByID(id);
+                String strRide = (new Gson()).toJson(ride);
+                bundle.putString("Ride", strRide);
 
                 ViewSingleRideFragment fragment = new ViewSingleRideFragment();
                 fragment.setArguments(bundle);

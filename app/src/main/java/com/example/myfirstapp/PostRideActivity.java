@@ -26,7 +26,7 @@ import java.util.List;
 
 public class PostRideActivity extends AppCompatActivity
 {
-    private String userId;
+    private String username;
     private Ride ride;
 
     @Override
@@ -35,7 +35,7 @@ public class PostRideActivity extends AppCompatActivity
         setContentView(R.layout.post_ride);
 
         Bundle b = getIntent().getExtras();
-        userId = b.getString("User id");
+        username = b.getString("Username");
 
         // Listen to create ride button
         findViewById(R.id.button_CreateRide).setOnClickListener(new View.OnClickListener() {
@@ -48,6 +48,10 @@ public class PostRideActivity extends AppCompatActivity
 
     public void createRide(View buttonView) {
         // Read values from view
+
+        DBHelper dbHelper = new DBHelper(this);
+        User ride_owner = dbHelper.getUserByName(username);
+        Long ride_owner_id = ride_owner.getId();
 
         // Get the parent layout to  be able to read other edit text fields.
         View view = (View) buttonView.getParent();
@@ -66,7 +70,7 @@ public class PostRideActivity extends AppCompatActivity
             String description = etDescription.getText().toString();
 
             // Create a new ride object and send it.
-            ride = new Ride(userId, destination, departureDate, numSeats, description);
+            ride = new Ride(ride_owner_id, username, destination, departureDate,numSeats,description);
             addRide(ride);
         } catch (NumberFormatException e){
             Toast.makeText(this, "Number of seats must be valid integer", Toast.LENGTH_SHORT).show();

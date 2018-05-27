@@ -42,7 +42,7 @@ public class RidesListAdapter extends ArrayAdapter<Ride> {
         TextView rTime = (TextView) customView.findViewById(R.id.departureTime);
 
 //        rOwnerPic.setImageResource(R.mipmap.ic_launcher_round);
-        rOwnerId.setText(singleRideItem.getOwnerID());
+        rOwnerId.setText(singleRideItem.getOwnerName());
         rDestination.setText(singleRideItem.getDestination());
         rNumSeats.setText(Integer.toString(singleRideItem.getNumSeats()));
         rTime.setText(new SimpleDateFormat("HH:mm").format(singleRideItem.getDepartureDate()));

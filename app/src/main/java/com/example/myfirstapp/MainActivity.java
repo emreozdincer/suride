@@ -50,18 +50,19 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private List<Ride> ridesList;
-    private List<User> usersList;
     private User user;
     private String userID;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001; // Request Code for Sign-in
     private static final int RC_POST_RIDE = 9002; // Request Code for PostRide
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DBHelper(this);
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -101,11 +102,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_rides:
                         selectedFragment = ViewRidesFragment.newInstance();
                         break;
-
-                    case R.id.navigation_development:
-                        Toast.makeText(MainActivity.this, "Development fragment is not implemented yet", Toast.LENGTH_LONG).show();
-                        selectedFragment = ViewRidesFragment.newInstance();
-                        break;
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, selectedFragment);
@@ -116,11 +112,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialize rides list
-        ridesList = new ArrayList<Ride>();
-        Ride dummyRide = new Ride("Ege Buildersohn","Uskudar", new Date(),2, "SURide and Chill?");
-        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),1, "Going to the game tonight.");
-        ridesList.add(dummyRide);
-        ridesList.add(dummyRide2);
+//        ridesList = new ArrayList<Ride>();
+//        Ride dummyRide = new Ride("Ege Buildersohn","Uskudar", new Date(),2, "SURide and Chill?");
+//        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),1, "Going to the game tonight.");
+//        ridesList.add(dummyRide);
+//        ridesList.add(dummyRide2);
     }
 
     private void signIn() {
@@ -155,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 String returnValue = data.getStringExtra("Take this ride");
                 Ride newRide = new Gson().fromJson(returnValue, Ride.class);
                 addRide(newRide);
-
                 setDefaultFragment();
             }
         }
@@ -200,13 +195,9 @@ public class MainActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             Log.d("handleSignInResult", "success");
             updateUI(account);
+            Log.d("handleSignInResult", account.getDisplayName());
 
-
-            // Add user to database if first time sign-in
-            if (user == null) {
-                createNewUser(account.getDisplayName());
-            }
-
+            setUser(account.getDisplayName());
             //Manually displaying the View Rides Fragment when sign in succeeds.
             setDefaultFragment();
 
@@ -225,11 +216,13 @@ public class MainActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            setUser(account.getDisplayName());
+        }
         updateUI(account);
     }
 
     public void  updateUI(GoogleSignInAccount account) {
-
         // References to view objects
         FrameLayout fl = (FrameLayout) findViewById(R.id.frame_layout);
         SignInButton btSignIn = findViewById(R.id.sign_in_button);
@@ -238,14 +231,14 @@ public class MainActivity extends AppCompatActivity {
         ImageView ivLogo =(ImageView) findViewById(R.id.iv_Logo);
 
         if (account != null) {
-            userID = account.getDisplayName();
+//            userID = account.getDisplayName();
             fl.setVisibility(View.VISIBLE);
             btSignIn.setVisibility(View.GONE);
             bnv.setVisibility(View.VISIBLE);
             ivBackground.setVisibility(View.GONE);
             ivLogo.setVisibility(View.GONE);
         } else {
-            userID = null;
+//            userID = null;
             fl.setVisibility(View.GONE);
             btSignIn.setVisibility(View.VISIBLE);
             bnv.setVisibility(View.GONE);
@@ -256,9 +249,9 @@ public class MainActivity extends AppCompatActivity {
 
     /* Called when user taps the Post a Ride button */
     public void postRide() {
-        if (userID != null) {
+        if (user != null) {
             Intent i=new Intent(this, PostRideActivity.class);
-            i.putExtra("User id", userID);
+            i.putExtra("Username", user.getUsername());
             try {
                 startActivityForResult(i,RC_POST_RIDE);
             }
@@ -269,29 +262,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addRide(Ride ride) {
-        ridesList.add(ride);
-    }
-
-    public List<Ride> getRidesList() {
-        return ridesList;
+        dbHelper.insertRide(ride.getDestination(), ride.getDepartureDate(), ride.getNumSeats(), ride.getDescription(), ride.getOwnerID(), ride.getOwnerName());
     }
 
     public User getUser() {
         if (user != null) {
             return user;
         } else {
-            return new User("Dummy Username");
+            return new User("Please Re-log");
         }
-    }
-
-    public Ride getRide(int rideID) {
-        System.out.println("Size: " + Integer.toString(ridesList.size()));
-        return ridesList.get(rideID);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // To prevent empty fragment screen, set the rides list fragment when there is no other.
         FragmentManager manager = getSupportFragmentManager();
         if (manager != null) {
             int backStackEntryCount = manager.getBackStackEntryCount();
@@ -302,13 +288,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void addCommentToRide(Ride.Comment comment, int ridePosition) {
-        ridesList.get(ridePosition).addComment(comment);
+    public void addCommentToRide(String text, Long rideID) {
+        dbHelper.insertComment(user.getUsername(), user.getId(), new Date(), text, rideID);
    }
 
-   private void createNewUser(String username) {
-       //TODO: Prompt for username etc
-       user = new User(username);
+   private void setUser(String username) {
+       //TODO: add to database etc
+       dbHelper = new DBHelper(this);
+
+       user = dbHelper.getUserByName(username);
+
+       if (user == null) {
+           dbHelper.insertUser(username);
+           user = dbHelper.getUserByName(username);
+       }
+
    }
 
    private void setDefaultFragment() {
