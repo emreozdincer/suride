@@ -8,17 +8,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Emre on 29-Mar-18.
@@ -32,7 +28,7 @@ public class PostRideActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.post_ride);
+        setContentView(R.layout.activity_post_ride);
 
         Bundle b = getIntent().getExtras();
         username = b.getString("Username");
@@ -65,7 +61,18 @@ public class PostRideActivity extends AppCompatActivity
         // TODO: process user input properly
         try {
             String destination = etDestination.getText().toString();
-            Date departureDate = new Date();
+
+
+            Date today = new Date();
+            System.out.println(today.getDate());
+            Date departureDate = new Date(
+                    today.getYear(),
+                    today.getMonth(),
+                    today.getDate(),
+                    tpDepartureDate.getHour(),
+                    tpDepartureDate.getMinute()
+            );
+
             int numSeats = Integer.parseInt( etNumSeats.getText().toString() );
             String description = etDescription.getText().toString();
 

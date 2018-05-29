@@ -33,12 +33,12 @@ public class CommentsAdapter extends ArrayAdapter<Ride.Comment> {
 
         Ride.Comment singleCommentItem = getItem(position);
 
-        TextView cID = (TextView) customView.findViewById(R.id.commentID);
+//        TextView cID = (TextView) customView.findViewById(R.id.commentID);
         TextView cText = (TextView) customView.findViewById(R.id.commentText);
         TextView cOwner = (TextView) customView.findViewById(R.id.commentOwner);
         TextView cDate = (TextView) customView.findViewById(R.id.commentDate);
 
-        cID.setText(Integer.toString(position));
+//        cID.setText(Integer.toString(position));
         cText.setText(singleCommentItem.getText());
         cOwner.setText(singleCommentItem.getOwnerUsername());
         cDate.setText(new SimpleDateFormat("HH:mm").format(singleCommentItem.getDate()));

@@ -3,6 +3,7 @@ package com.example.myfirstapp;
 //import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -65,13 +66,9 @@ public class ViewRidesFragment extends Fragment {
         // Set the listener for list view
         tasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Send ride id (postiion) to ViewSingleRideFragment
                 Bundle bundle = new Bundle();
-                bundle.putInt("RideID", (int) id);
-
-
-                System.out.println("Position: " + position);
-                System.out.println("ID: " + id);
+//                System.out.println("Position: " + position);
+//                System.out.println("ID: " + id);
 
                 Ride ride = dbHelper.getRideByID(id);
                 String strRide = (new Gson()).toJson(ride);
@@ -82,7 +79,7 @@ public class ViewRidesFragment extends Fragment {
 
                 // Hide Post Button
                 View rootView = view.getRootView();
-                Button buttonPostRide = (Button) rootView.findViewById(R.id.button_postRide);
+                FloatingActionButton buttonPostRide = (FloatingActionButton) rootView.findViewById(R.id.button_postRide);
                 buttonPostRide.setVisibility(View.GONE);
 
                 // Change Fragment
@@ -95,12 +92,6 @@ public class ViewRidesFragment extends Fragment {
 
         return view;
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        ridesList = mainActivity.getRidesList();
-//    }
 
     // TODO: Read rides_list from database on data change
 }

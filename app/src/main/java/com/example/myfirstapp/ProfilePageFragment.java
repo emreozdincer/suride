@@ -33,12 +33,22 @@ public class ProfilePageFragment extends Fragment {
         TextView tvUserName = (TextView) view.findViewById(R.id.tv_ProfileName);
         TextView tvRating = (TextView) view.findViewById(R.id.tv_Rating);
         TextView tvEmail = (TextView) view.findViewById(R.id.tv_Email);
+        TextView tvRideCount = (TextView) view.findViewById(R.id.tv_TotalRides);
 
-        User user = mainActivity.getUser();
+        String username = mainActivity.getUser().getUsername();
+        DBHelper dbHelper = new DBHelper(mainActivity.getApplicationContext());
+
+        User user = dbHelper.getUserByName(username);
+
         tvUserName.setText(user.getUsername());
-//        tvRating.setText(Float.toString(user.getAverageRating()));
-//        tvEmail.setText(user.getEmail());
-        tvEmail.setText("thisisemail@sabanciuniv.edu");
+
+        double averageRating = user.getAverageRating();
+        tvRating.setText(Double.toString(averageRating));
+
+        tvRideCount.setText(Integer.toString(user.getRatingCount()));
+
+        //        tvEmail.setText(user.getEmail());
+        tvEmail.setText(user.getEmail());
 
         // listen to sign-out button
         view.findViewById(R.id.button_signOut).setOnClickListener(new View.OnClickListener() {

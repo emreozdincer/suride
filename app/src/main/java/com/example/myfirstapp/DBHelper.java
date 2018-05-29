@@ -20,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_USERS = "Users";
     public static final String USER_ID = "_id"; // primary key
     public static final String USER_NAME = "user_name";
+    public static final String USER_EMAIL = "user_email";
     public static final String USER_TOTAL_RATING = "user_total_rating";
     public static final String USER_RATING_COUNT = "user_rating_count";
     public static final String USER_OWNED_RIDE_ID = "user_owned_ride_id"; // foreign key
@@ -45,13 +46,14 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COMMENT_ON_RIDE_ID = "comment_on_ride_id"; // foreign key
 
     private static final String DATABASE_NAME = "uber.db";
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 31;
 
 
     // Users table creation sql statement
     private static final String CREATE_USERS_TABLE = "CREATE TABLE IF NOT EXISTS "
             + TABLE_USERS + "("
             + USER_ID + " integer primary key autoincrement, "
+            + USER_EMAIL + " text not null, "
             + USER_NAME + " text not null, "
             + USER_TOTAL_RATING + " integer, "
             + USER_RATING_COUNT + " integer, " //no boolean storage class in SQLite
@@ -99,12 +101,13 @@ public class DBHelper extends SQLiteOpenHelper {
 //        insertRide("GS", new Date(), 5, "Gelmeyin");
     }
 
-    private long insertUser(SQLiteDatabase db, String name) {
+    private long insertUser(SQLiteDatabase db, String name, String email) {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(USER_NAME, name);
-        values.put(USER_TOTAL_RATING, 12);
-        values.put(USER_RATING_COUNT, 3);
+        values.put(USER_EMAIL, email);
+        values.put(USER_TOTAL_RATING, 0);
+        values.put(USER_RATING_COUNT, 0);
         values.put(USER_OWNED_RIDE_ID, -1);
         values.put(USER_JOINED_RIDE_ID, -1);
         // Insert the new row, returning the primary key value of the new row
@@ -158,10 +161,59 @@ public class DBHelper extends SQLiteOpenHelper {
         return newCommentId;
     }
 
-    public long insertUser(String name){
+    public long insertUser(String name, String email){
         // Gets the data repository in write mode
         SQLiteDatabase db = getWritableDatabase();
-        return insertUser(db, name);
+        return insertUser(db, name, email);
+    }
+
+    private long changeRideSeats (SQLiteDatabase db, Long ride_id, int newNumSeats){
+        ContentValues newValues = new ContentValues();
+        newValues.put(RIDE_NUMSEATS, newNumSeats);
+        return db.update(TABLE_RIDES, newValues,"_id="+ride_id, null);
+    }
+
+    public long changeRideSeats(Long ride_id, int newNumSeats){
+        SQLiteDatabase db = getWritableDatabase();
+        return changeRideSeats(db, ride_id, newNumSeats);
+    }
+
+    private long setUserJoinedRideID (SQLiteDatabase db, Long userID, Long rideID){
+        ContentValues newValues = new ContentValues();
+        newValues.put(USER_JOINED_RIDE_ID, rideID);
+        return db.update(TABLE_USERS, newValues,"_id="+userID, null);
+    }
+
+    public long setUserJoinedRideID(Long userID, Long rideID){
+        SQLiteDatabase db = getWritableDatabase();
+        return setUserJoinedRideID(db, userID, rideID);
+    }
+
+    private void incrementRideCount (SQLiteDatabase db, Long userID){
+        String valueToIncrementBy = "1";
+        String[] bindingArgs = new String[]{ valueToIncrementBy, Long.toString( userID) };
+
+        db.execSQL("UPDATE " + TABLE_USERS +
+                        " SET " + USER_RATING_COUNT + " = " + USER_RATING_COUNT + " + ?" +
+                " WHERE " + USER_ID + " = ?",
+                bindingArgs);
+        db.close();
+
+        return;
+    }
+
+    public void incrementRideCount(Long userID) {
+        SQLiteDatabase db = getWritableDatabase();
+        incrementRideCount(db, userID);
+    }
+
+    public long deleteRideByID(Long rideID) {
+        SQLiteDatabase db = getWritableDatabase();
+        return deleteRideByID(db, rideID);
+    }
+
+    private long deleteRideByID(SQLiteDatabase db, Long rideID) {
+        return db.delete(TABLE_RIDES,"_id="+rideID,null);
     }
 
     public Cursor getAllUsers(){
@@ -175,7 +227,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 USER_TOTAL_RATING,
                 USER_RATING_COUNT,
                 USER_OWNED_RIDE_ID,
-                USER_JOINED_RIDE_ID
+                USER_JOINED_RIDE_ID,
+                USER_EMAIL
         };
 
         // How you want the results sorted in the resulting Cursor
@@ -218,7 +271,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 null,                                     // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                null                              // The sort order
+                RIDE_DEPARTURE_DATE                              // The sort order
         );
 //        db.close();
         return c;
@@ -261,7 +314,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 USER_TOTAL_RATING,
                 USER_RATING_COUNT,
                 USER_OWNED_RIDE_ID,
-                USER_JOINED_RIDE_ID
+                USER_JOINED_RIDE_ID,
+                USER_EMAIL
         };
 
         String selection = USER_NAME + " like ?";
@@ -282,6 +336,43 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         c.close();
         return user;
+    }
+
+    public List<Long> getUserIDsByJoinedRideID (Long joinedRideID) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        // you will actually use after this query.
+        String[] projection = {
+                USER_ID,
+                USER_NAME,
+                USER_TOTAL_RATING,
+                USER_RATING_COUNT,
+                USER_OWNED_RIDE_ID,
+                USER_JOINED_RIDE_ID,
+                USER_EMAIL
+        };
+
+        String selection = USER_JOINED_RIDE_ID + " like ?";
+        String []  selectionArgs = {Long.toString(joinedRideID)};
+
+        Cursor c = db.query(
+                TABLE_USERS,  // The table to query
+                projection,                               // The columns to return
+                selection,                                     // The columns for the WHERE clause
+                selectionArgs,                                     // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+        User user = null;
+        List<Long> allUserIDs = new ArrayList<Long>();
+        if(c.moveToFirst()) { // returns false if the cursor is empty!
+            user = new User(c);
+            allUserIDs.add(user.getId());
+        }
+        c.close();
+        return allUserIDs;
     }
 
     public Ride getRideByID(long id) {

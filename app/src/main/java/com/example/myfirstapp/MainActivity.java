@@ -111,12 +111,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize rides list
-//        ridesList = new ArrayList<Ride>();
-//        Ride dummyRide = new Ride("Ege Buildersohn","Uskudar", new Date(),2, "SURide and Chill?");
-//        Ride dummyRide2 = new Ride("Ege Builderyovski","Besiktas", new Date(),1, "Going to the game tonight.");
-//        ridesList.add(dummyRide);
-//        ridesList.add(dummyRide2);
     }
 
     private void signIn() {
@@ -197,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
             updateUI(account);
             Log.d("handleSignInResult", account.getDisplayName());
 
-            setUser(account.getDisplayName());
+            setUser(account.getDisplayName(), account.getEmail());
             //Manually displaying the View Rides Fragment when sign in succeeds.
             setDefaultFragment();
 
@@ -217,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            setUser(account.getDisplayName());
+            setUser(account.getDisplayName(), account.getEmail());
         }
         updateUI(account);
     }
@@ -263,13 +257,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void addRide(Ride ride) {
         dbHelper.insertRide(ride.getDestination(), ride.getDepartureDate(), ride.getNumSeats(), ride.getDescription(), ride.getOwnerID(), ride.getOwnerName());
+        dbHelper.incrementRideCount(ride.getOwnerID());
     }
 
     public User getUser() {
         if (user != null) {
             return user;
         } else {
-            return new User("Please Re-log");
+            return new User("Please Re-log", "dummy email");
         }
     }
 
@@ -285,21 +280,59 @@ public class MainActivity extends AppCompatActivity {
                 setDefaultFragment();
             }
         }
+    }
 
+    public void updateOnJoinRide(Long rideID, int remainingNumSeats){
+        System.out.println("User joining to ride " + Long.toString(rideID) );
+        dbHelper.setUserJoinedRideID(user.getId(), rideID);
+        dbHelper.changeRideSeats(rideID, remainingNumSeats);
+        String text = "I have joined the ride.";
+        dbHelper.insertComment(user.getUsername(), user.getId(), new Date(), text, rideID);
+        updateCurrentUser();
+    }
+
+    public void updateOnDeleteRide(Long rideID) {
+        // Get all users who joined on this ride
+        List<Long> rideesOnTheRide = dbHelper.getUserIDsByJoinedRideID(rideID);
+
+        // Set their joined ride ids to -1
+        for (Long rideeID : rideesOnTheRide) {
+            dbHelper.setUserJoinedRideID(rideeID, -1L);
+        }
+
+        // Delete the ride
+        dbHelper.deleteRideByID(rideID);
+        Toast.makeText(this, "Ride has been deleted", Toast.LENGTH_LONG).show();
+
+        updateCurrentUser();
+
+        // Simulate closing fragment
+        onBackPressed();
+    }
+
+    private void updateCurrentUser() {
+        user = dbHelper.getUserByName(user.getUsername());
     }
 
     public void addCommentToRide(String text, Long rideID) {
         dbHelper.insertComment(user.getUsername(), user.getId(), new Date(), text, rideID);
    }
 
-   private void setUser(String username) {
-       //TODO: add to database etc
+
+   private void setUser(String username, String email) {
+        //TODO: Add enforcement on @sabanciuniv.edu
+
+       String words[] = username.split(" ");
+       if (words.length >= 3) {
+           username = words[0] + " " + words[1];
+       }
+
        dbHelper = new DBHelper(this);
 
        user = dbHelper.getUserByName(username);
 
        if (user == null) {
-           dbHelper.insertUser(username);
+           dbHelper.insertUser(username, email);
            user = dbHelper.getUserByName(username);
        }
 

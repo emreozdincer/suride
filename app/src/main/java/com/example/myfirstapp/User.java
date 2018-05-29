@@ -12,30 +12,47 @@ import java.util.List;
 public class User {
     private Long id;
     private String username;
+    private String email;
     private int totalRating;
     private int ratingCount;
-    private int ownedRideId;
-    private int joinedRideId;
+    private Long ownedRideId;
+    private Long joinedRideId;
     private List<Ride> previousRides;
 
     public User(String username) {
         this.username = username;
-        this.totalRating = 13;
-        this.ratingCount = 3;
         this.previousRides = new ArrayList<Ride>();
-        this.ownedRideId = -1;
-        this.joinedRideId = -1;
-        this.id =  -1L;
+    }
+
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
     }
 
     public User(Cursor cursor) {
         this.id = cursor.getLong(cursor.getColumnIndex(DBHelper.USER_ID));
+        this.email = cursor.getString(cursor.getColumnIndex(DBHelper.USER_EMAIL));
         this.username = cursor.getString(cursor.getColumnIndex(DBHelper.USER_NAME));
         this.totalRating = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_TOTAL_RATING));
         this.ratingCount = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_RATING_COUNT));
-        this.ownedRideId = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_OWNED_RIDE_ID));
-        this.joinedRideId = cursor.getInt(cursor.getColumnIndex(DBHelper.USER_JOINED_RIDE_ID));
+        this.ownedRideId = cursor.getLong(cursor.getColumnIndex(DBHelper.USER_OWNED_RIDE_ID));
+        this.joinedRideId = cursor.getLong(cursor.getColumnIndex(DBHelper.USER_JOINED_RIDE_ID));
         this.previousRides = null;
+    }
+
+    public double getAverageRating() {
+        double rating;
+        if (ratingCount == 0 ){
+            rating = 0.0;
+        }
+        else {
+            rating =  (double) totalRating /  ratingCount;
+        }
+        return rating;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public Long getId() {
@@ -70,20 +87,12 @@ public class User {
         this.ratingCount = ratingCount;
     }
 
-    public int getOwnedRideId() {
+    public Long getOwnedRideId() {
         return ownedRideId;
     }
 
-    public void setOwnedRideId(int ownedRideId) {
-        this.ownedRideId = ownedRideId;
-    }
-
-    public int getJoinedRideId() {
+    public Long getJoinedRideId() {
         return joinedRideId;
-    }
-
-    public void setJoinedRideId(int joinedRideId) {
-        this.joinedRideId = joinedRideId;
     }
 
     public List<Ride> getPreviousRides() {

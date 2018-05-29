@@ -2,6 +2,9 @@ package com.example.myfirstapp;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,13 +36,23 @@ public class CommentCursorAdapter extends CursorAdapter{
         Ride.Comment comment = new Ride.Comment(cursor);
 
         try {
-            TextView cID = (TextView) view.findViewById(R.id.commentID);
+//            TextView cID = (TextView) view.findViewById(R.id.commentID);
             TextView cText = (TextView) view.findViewById(R.id.commentText);
             TextView cOwner = (TextView) view.findViewById(R.id.commentOwner);
             TextView cDate = (TextView) view.findViewById(R.id.commentDate);
 
-            cID.setText(Long.toString(comment.getId()));
-            cText.setText(comment.getText());
+//            cID.setText(Long.toString(comment.getId()));
+            String commentText = comment.getText();
+
+            if (commentText.equals( "I have joined the ride.")){
+                cText.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                cText.setTypeface(cText.getTypeface(), Typeface.BOLD);
+            } else {
+                cText.setTextColor(Color.BLACK);
+                cText.setTypeface(null, Typeface.NORMAL);
+
+            }
+            cText.setText(commentText);
             cOwner.setText(comment.getOwnerUsername());
             cDate.setText(new SimpleDateFormat("HH:mm").format(comment.getDate()));
 
