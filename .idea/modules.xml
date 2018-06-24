@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyFirstApp.iml" filepath="$PROJECT_DIR$/MyFirstApp.iml" />
+      <module fileurl="file://C:\Users\Emre\Desktop\DEV\SURIDE\suride-androidclient\MyFirstApp.iml" filepath="C:\Users\Emre\Desktop\DEV\SURIDE\suride-androidclient\MyFirstApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/suride-androidclient.iml" filepath="$PROJECT_DIR$/suride-androidclient.iml" />
     </modules>
   </component>
 </project>

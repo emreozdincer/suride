@@ -45,6 +45,7 @@ public class ViewSingleRideFragment extends Fragment {
         dbHelper = new DBHelper(mainActivity.getApplicationContext());
     }
 
+    // TODO: Move UI modifications to onActivityCreated?
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
